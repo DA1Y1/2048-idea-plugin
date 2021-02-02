@@ -1,0 +1,26 @@
+<idea-plugin>
+    <id>com.daie.game.2048.id</id>
+    <name>2048</name>
+    <vendor email="1018905951@qq.com">daie</vendor>
+    <version>1.0.0</version>
+
+    <description><![CDATA[
+        GAME 2048
+    ]]></description>
+
+    <change-notes><![CDATA[
+      <ul>
+        <li>NEW GAME</li>
+      </ul>
+    ]]></change-notes>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="2048" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+                    factoryClass="com.daie.game.Game2048"/>
+    </extensions>
+
+    <actions>
+    </actions>
+</idea-plugin>

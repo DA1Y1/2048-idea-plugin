@@ -3,23 +3,36 @@ plugins {
     id 'org.jetbrains.intellij' version '0.6.5'
 }
 
-group 'com.daie'
+apply plugin: 'idea'
+apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'java'
+
+group 'com.daiyi'
 version '1.0.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
 
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
-
 }
 
 intellij {
-    version '2020.2.4'
-    localPath 'C:\\Program Files\\JetBrains\\IntelliJ IDEA 2020.2.4'
-
+    type 'IU'
+    localPath '/Applications/IntelliJ IDEA.app/Contents'
+    plugins = ['com.intellij.java']
+    sandboxDirectory = "${rootProject.rootDir}/idea-sandbox"
+    updateSinceUntilBuild = false
 }
 patchPluginXml {
 }
+
+publishPlugin {
+    channels = 'Stable'
+    token = System.getenv("ORG_GRADLE_PROJECT_intellijPublishToken")
+}
+

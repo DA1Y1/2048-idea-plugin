@@ -1,11 +1,21 @@
 <idea-plugin>
-    <id>com.daie.game.2048.id</id>
+    <id>com.daiyi.game.2048.id</id>
     <name>2048</name>
-    <vendor email="1018905951@qq.com">daie</vendor>
+    <vendor email="1018905951@qq.com">daiyi</vendor>
     <version>1.0.0</version>
 
     <description><![CDATA[
-        GAME 2048
+        <tag> 2048 game </tag>
+      <h4>2048 plugin.</h4>
+      <h3>中文：</h3>
+      <ul>
+            <li>开始游戏。</li>
+      </ul>
+
+      <h3>English:</h3>
+      <ul>
+            <li>Start game.</li>
+      </ul>
     ]]></description>
 
     <change-notes><![CDATA[
@@ -14,11 +24,14 @@
       </ul>
     ]]></change-notes>
 
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="162"/>
+
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="2048" secondary="true" icon="AllIcons.General.Modified" anchor="right"
-                    factoryClass="com.daie.game.Game2048"/>
+                    factoryClass="com.daiyi.game.GameWindowFactory"/>
     </extensions>
 
     <actions>

@@ -1,11 +1,7 @@
-package com.daie.game;
+package com.daiyi.game;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowFactory;
-import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,28 +12,40 @@ import java.awt.event.MouseEvent;
 import java.util.Random;
 
 /**
- * @Created by DAIE
- * @Date 2021/2/2 11:20
- * @Description 2048 GAME
+ * @author daiyi
+ * @date 2021/2/2
  */
-public class Game2048 extends JPanel implements ToolWindowFactory {
+public class Game2048 extends JPanel {
 
     private final String fontStyle = "SansSerif";
 
-    //枚举：开始，获胜，正在进行游戏，游戏结束
     enum State {
-        start, won, running, over
+        /**
+         * 开始
+         */
+        start,
+        /**
+         * 正在进行游戏
+         */
+        running,
+        /**
+         * 游戏结束
+         */
+        over
     }
 
     final Color[] colorTable = {
             new Color(0x701710), new Color(0xFFE4C3), new Color(0xfff4d3),
             new Color(0xffdac3), new Color(0xe7b08e), new Color(0xe7bf8e),
             new Color(0xffc4c3), new Color(0xE7948e), new Color(0xbe7e56),
-            new Color(0xbe5e56), new Color(0x9c3931), new Color(0x701710)};
+            new Color(0xbe5e56), new Color(0x9c3931), new Color(0x701710)
+    };
 
-    final static int target = 2048;//游戏最终目标
 
-    static int highestNum;//最高数
+    /**
+     * 最高数
+     */
+    static int highestNum;
 
     static int score;
 
@@ -51,11 +59,21 @@ public class Game2048 extends JPanel implements ToolWindowFactory {
     private State gameState = State.start;
     private boolean checkingAvailableMoves;
 
-    public Game2048() {
-        setPreferredSize(new Dimension(900, 700));
-        setBackground(new Color(0xFAF8EF));
+
+    public Game2048(Project project, ToolWindow toolWindow, GameWindowFactory gameWindowFactory) {
+        // setPreferredSize(new Dimension(900, 700));
         setFont(new Font(fontStyle, Font.BOLD, 48));
         setFocusable(true);
+
+        // 添加restart按钮
+        JButton restartButtion = new JButton("Restart");
+        this.add(restartButtion);
+        restartButtion.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                gameWindowFactory.createToolWindowContent(project, toolWindow);
+            }
+        });
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -64,6 +82,7 @@ public class Game2048 extends JPanel implements ToolWindowFactory {
                 repaint();
             }
         });
+
 
         addKeyListener(new KeyAdapter() {
             @Override
@@ -87,7 +106,11 @@ public class Game2048 extends JPanel implements ToolWindowFactory {
         });
     }
 
-    //复写JPanel里面的paintComponent方法，创建一个我们自己想要的界面
+    /**
+     * 复写JPanel里面的paintComponent方法，创建一个我们自己想要的界面
+     *
+     * @param gg 图
+     */
     @Override
     public void paintComponent(Graphics gg) {
         super.paintComponent(gg);
@@ -97,7 +120,10 @@ public class Game2048 extends JPanel implements ToolWindowFactory {
         drawGrid(g);
     }
 
-    //开始游戏
+
+    /**
+     * 开始游戏
+     */
     void startGame() {
         if (gameState != State.running) {
             score = 0;
@@ -110,7 +136,12 @@ public class Game2048 extends JPanel implements ToolWindowFactory {
         }
     }
 
-    //生成框及里面内容
+
+    /**
+     * 生成框及里面内容
+     *
+     * @param g 图
+     */
     void drawGrid(Graphics2D g) {
         g.setColor(gridColor);
         g.fillRoundRect(200, 100, 499, 499, 15, 15);
@@ -130,15 +161,15 @@ public class Game2048 extends JPanel implements ToolWindowFactory {
             g.fillRoundRect(215, 115, 469, 469, 7, 7);
             g.setColor(gridColor.darker());//设置一个比当前颜色深一级的Color
             g.setFont(new Font(fontStyle, Font.BOLD, 128));
-            g.drawString("2048", 310, 270);
+            g.drawString("2048", 280, 270);
             g.setFont(new Font(fontStyle, Font.BOLD, 20));
-            if (gameState == State.won) {
-                g.drawString("YOU WIN!", 390, 470);
-            } else if (gameState == State.over)
-                g.drawString("FAIL! PLEASE RESATRT", 330, 350);
+            if (gameState == State.over) {
+                // todo 这里展示所有的最高成绩
+                g.drawString("Game over! Highest score: " + highestNum, 300, 350);
+            }
             g.setColor(gridColor);
-            g.drawString("START GAME", 390, 470);
-            g.drawString("use keyborad to move the block", 290, 530);
+            g.drawString("Click to start", 390, 470);
+            g.drawString("Use ↑↓←→ to move the block", 290, 530);
         }
     }
 
@@ -174,16 +205,18 @@ public class Game2048 extends JPanel implements ToolWindowFactory {
             int j = Math.abs(countDownFrom - i);
             int r = j / side;
             int c = j % side;
-            if (tiles[r][c] == null)
+            if (tiles[r][c] == null) {
                 continue;
+            }
             int nextR = r + yIncr;
             int nextC = c + xIncr;
             while (nextR >= 0 && nextR < side && nextC >= 0 && nextC < side) {
                 Tile next = tiles[nextR][nextC];
                 Tile curr = tiles[r][c];
                 if (next == null) {
-                    if (checkingAvailableMoves)
+                    if (checkingAvailableMoves) {
                         return true;
+                    }
                     tiles[nextR][nextC] = curr;
                     tiles[r][c] = null;
                     r = nextR;
@@ -192,28 +225,29 @@ public class Game2048 extends JPanel implements ToolWindowFactory {
                     nextC += xIncr;
                     moved = true;
                 } else if (next.canMergeWith(curr)) {
-                    if (checkingAvailableMoves)
+                    if (checkingAvailableMoves) {
                         return true;
+                    }
                     int value = next.mergeWith(curr);
-                    if (value > highestNum)
+                    if (value > highestNum) {
                         highestNum = value;
+                    }
                     score += value;
                     tiles[r][c] = null;
                     moved = true;
                     break;
-                } else
+                } else {
                     break;
+                }
             }
         }
         if (moved) {
-            if (highestNum < target) {
-                clearMerged();
-                addRandomTile();
-                if (!movesAvailable()) {//如果不能再移动图块，则则把游戏状态变成游戏失败
-                    gameState = State.over;
-                }
-            } else if (highestNum == target)//如果最高数=2048，则把游戏状态变成游戏成功
-                gameState = State.won;
+            clearMerged();
+            addRandomTile();
+            if (!movesAvailable()) {
+                //如果不能再移动图块，则则把游戏状态变成游戏失败
+                gameState = State.over;
+            }
         }
         return moved;
     }
@@ -235,13 +269,21 @@ public class Game2048 extends JPanel implements ToolWindowFactory {
     }
 
     void clearMerged() {
-        for (Tile[] row : tiles)
-            for (Tile tile : row)
-                if (tile != null)
+        for (Tile[] row : tiles) {
+            for (Tile tile : row) {
+                if (tile != null) {
                     tile.setMerged(false);
+                }
+            }
+        }
     }
 
-    //判断是否还能继续移动图块
+
+    /**
+     * 判断是否还能继续移动图块
+     *
+     * @return true|false
+     */
     boolean movesAvailable() {
         checkingAvailableMoves = true;
         boolean hasMoves = moveUp() || moveDown() || moveLeft() || moveRight();
@@ -249,93 +291,18 @@ public class Game2048 extends JPanel implements ToolWindowFactory {
         return hasMoves;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame f = new JFrame();
-            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            f.setTitle("2048");
-            f.setResizable(true);
-            f.add(new Game2048(), BorderLayout.CENTER);
-            f.pack();
-            f.setLocationRelativeTo(null);
-            f.setVisible(true);
-        });
-    }
+    // public static void main(String[] args) {
+    //     SwingUtilities.invokeLater(() -> {
+    //         JFrame f = new JFrame();
+    //         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    //         f.setTitle("2048");
+    //         f.setResizable(true);
+    //         f.add(new Game2048(), BorderLayout.CENTER);
+    //         f.pack();
+    //         f.setLocationRelativeTo(null);
+    //         f.setVisible(true);
+    //     });
+    // }
 
-    /**
-     * Create the tool window content.
-     *
-     * @param project    current project
-     * @param toolWindow current tool window
-     */
-    public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        Game2048 game2048 = new Game2048();
-        //按键监听事件
-        game2048.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_UP:
-                        moveUp();
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        moveDown();
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        moveLeft();
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        moveRight();
-                        break;
-                }
-                repaint();
-            }
-        });
-
-        //todo 添加restart按钮
-        //JButton restartButtion = new JButton("restart");
-        //game2048.add(restartButtion);
-        //restartButtion.addMouseListener(new MouseAdapter() {
-        //    @Override
-        //    public void mousePressed(MouseEvent e) {
-        //    }
-        //});
-
-        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-        Content content = contentFactory.createContent(game2048, "", false);
-        toolWindow.getContentManager().addContent(content);
-
-
-    }
 }
 
-class Tile {
-    private boolean merged;
-    private int value;
-
-    Tile(int val) {
-        value = val;
-    }
-
-    boolean canMergeWith(Tile other) {
-        return !merged && other != null && !other.merged && value == other.getValue();
-    }
-
-    int mergeWith(Tile other) {
-        if (canMergeWith(other)) {
-            value *= 2;
-            merged = true;
-            return value;
-        }
-        return -1;
-    }
-
-    //set get
-    int getValue() {
-        return value;
-    }
-
-    void setMerged(boolean m) {
-        merged = m;
-    }
-}

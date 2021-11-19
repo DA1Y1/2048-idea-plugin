@@ -1,4 +1,4 @@
-package com.daiyi.game;
+package com.daie.game;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;

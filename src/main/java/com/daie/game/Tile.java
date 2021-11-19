@@ -1,4 +1,4 @@
-package com.daiyi.game;
+package com.daie.game;
 
 /**
  * @author daiyi

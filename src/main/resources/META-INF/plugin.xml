@@ -1,26 +1,31 @@
 <idea-plugin>
-    <id>com.daiyi.game.2048.id</id>
+    <id>com.daie.game.2048.id</id>
     <name>2048</name>
     <vendor email="1018905951@qq.com">daiyi</vendor>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <description><![CDATA[
         <tag> 2048 game </tag>
-      <h4>2048 plugin.</h4>
+      <h4>2048 plugin.An idea's integrated game.</h4>
       <h3>中文：</h3>
       <ul>
-            <li>开始游戏。</li>
+            <li>支持开始和重开2048游戏。</li>
       </ul>
 
       <h3>English:</h3>
       <ul>
-            <li>Start game.</li>
+            <li>Support start and restart 2048 game.</li>
       </ul>
     ]]></description>
 
     <change-notes><![CDATA[
+    <p>1.0.0</p>
       <ul>
-        <li>NEW GAME</li>
+        <li>New game</li>
+      </ul>
+    <p>1.0.1</p>
+      <ul>
+        <li>Restart game</li>
       </ul>
     ]]></change-notes>
 
@@ -31,7 +36,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="2048" secondary="true" icon="AllIcons.General.Modified" anchor="right"
-                    factoryClass="com.daiyi.game.GameWindowFactory"/>
+                    factoryClass="com.daie.game.GameWindowFactory"/>
     </extensions>
 
     <actions>
